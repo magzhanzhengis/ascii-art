@@ -6,41 +6,46 @@ import (
 	"os"
 )
 
-func loadbanner() [][]string {
+// LoadBanner loads the banner data from the file and returns a map of ASCII characters
+func loadbanner() (map[rune][]string, error) {
+	// Open the banner file
 	bannerfile, err := os.Open("standard.txt")
 	if err != nil {
-		fmt.Printf("Error openning the file %v", err)
-		os.Exit(1)
+		fmt.Printf("Error opening the file: %v\n", err)
+		return nil, err
 	}
 	defer bannerfile.Close()
-	scanner := bufio.NewScanner(bannerfile)
-	var lines []string
-	groupedlines := [][]string{}
-	count := 0
-	for i := 0; scanner.Scan(); i++ {
-		if count%8 != 0 && scanner.Text() != "\n" {
-			lines = append(lines, scanner.Text())
-			count++
-		}
-		groupedlines = append(groupedlines, lines)
-		lines = nil
-	}
-	if err := scanner.Err(); err != nil {
-		fmt.Printf("Error scanning %v\n", err)
-	}
-	// m := make(map[rune][]string)
-	//
-	//	for i = 32, i<=127, i++{
-	//		m[32] = lines[i-32]
-	//	}
-	return groupedlines
-}
 
-// func removeByValue(slice []string, value string) []string {
-// 	for i, v := range slice {
-// 		if v == value {
-// 			return append(slice[:i], slice[i+1:]...)
-// 		}
-// 	}
-// 	return slice // Return the original slice if value not found
-// }
+	// Initialize variables
+	scanner := bufio.NewScanner(bannerfile)
+	banner := make(map[rune][]string)
+	var lines []string
+	currentChar := ' ' // Start from the space character
+
+	// Read the file line by line
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line == "" { // Blank line indicates the end of a character
+			if len(lines) > 0 {
+				banner[currentChar] = lines
+				lines = []string{}
+				currentChar++ // Move to the next character
+			}
+			continue
+		}
+		lines = append(lines, line)
+	}
+
+	// Add the last character (if any)
+	if len(lines) > 0 {
+		banner[currentChar] = lines
+	}
+
+	// Check for scanner errors
+	if err := scanner.Err(); err != nil {
+		fmt.Printf("Error scanning the file: %v\n", err)
+		return nil, err
+	}
+
+	return banner, nil
+}
