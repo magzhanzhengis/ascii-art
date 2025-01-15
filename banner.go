@@ -9,7 +9,7 @@ import (
 // LoadBanner loads the banner data from the file and returns a map of ASCII characters
 func loadbanner() (map[rune][]string, error) {
 	// Open the banner file
-	bannerfile, err := os.Open("standard.txt")
+	bannerfile, err := os.Open("/Users/mzhengis/ascii-art/standard.txt")
 	if err != nil {
 		fmt.Printf("Error opening the file: %v\n", err)
 		return nil, err
@@ -25,11 +25,12 @@ func loadbanner() (map[rune][]string, error) {
 	// Read the file line by line
 	for scanner.Scan() {
 		line := scanner.Text()
-		if line == "" { // Blank line indicates the end of a character
+		if line == "" {
 			if len(lines) > 0 {
 				banner[currentChar] = lines
+				fmt.Printf("Loaded character: '%c'\n", currentChar) // Debug print
 				lines = []string{}
-				currentChar++ // Move to the next character
+				currentChar++
 			}
 			continue
 		}

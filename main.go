@@ -12,12 +12,18 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Debug: Print the banner data
-	for char, ascii := range banner {
-		fmt.Printf("Character: %q\n", char)
-		for _, line := range ascii {
-			fmt.Println(line)
-		}
-		fmt.Println()
+	if len(os.Args) != 2 {
+		fmt.Print("Give more arguments")
+		return
 	}
+	for i := 0; i < len(os.Args[1]); i++ {
+		// if banner[rune((os.Args[1][i]))] == nil {
+		// 	// fmt.Printf("The character '%c' not found: \n", os.Args[1][i])
+		// 	// os.Exit(1)
+		// 	fmt.Println(banner[rune((os.Args[1][i]))])
+		// }
+		fmt.Println(banner[rune((os.Args[0][i]))])
+	}
+	// render(os.Args[1], banner)
+
 }
